@@ -1,7 +1,9 @@
-module Handlebars
+require 'stringio'
+
+class Handlebars
   class Compiler
     attr_accessor :string, :pointer, :mustache, :text, :fn, :newlines, :comment, :escaped, :partial, :inverted, :end_condition, :continue_inverted
-    def initialize(string)
+    def initialize(string=StringIO.new(''))
         @string   = string
         @pointer  = -1
         @mustache = false
@@ -15,5 +17,10 @@ module Handlebars
         @end_condition = nil
         @continue_inverted = false
     end
+
+    def parse_mustache
+
+    end
+
   end
 end

@@ -1,3 +1,5 @@
+require 'handlebars/compiler'
+
 class Handlebars
   attr_accessor :compiled_partials
   def compile(input)

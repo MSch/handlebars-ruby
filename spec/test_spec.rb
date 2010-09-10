@@ -1,5 +1,8 @@
 require 'spec_helper'
+require 'handlebars'
 
 describe 'something' do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'instanziates Compiler' do
+    Handlebars::Compiler.new
+  end
 end
