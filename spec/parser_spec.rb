@@ -3,6 +3,51 @@ require 'handlebars'
 
 describe Handlebars::Parser do
 
+  it 'parses the handlebars inverted section syntax' do
+    lexer = Handlebars::Parser.new
+    tokens = lexer.compile(<<-EOF)
+{{#project}}
+<h1>{{name}}</h1>
+<div>{{body}}</div>
+{{^}}
+<h1>No projects</h1>
+{{/project}}
+EOF
+    expected = [:multi,
+      [:mustache, :section, "project", nil, [:multi,
+        [:static, "<h1>"],
+        [:mustache, :etag, "name", nil],
+        [:static, "</h1>\n<div>"],
+        [:mustache, :etag, "body", nil],
+        [:static, "</div>\n"]]],
+      [:mustache, :inverted_section, "project", [:multi,
+        [:static, "<h1>No projects</h1>\n"]]]]
+    tokens.should eq(expected)
+  end
+
+  it 'parses the mustache inverted section syntax' do
+    lexer = Handlebars::Parser.new
+    tokens = lexer.compile(<<-EOF)
+{{#project}}
+<h1>{{name}}</h1>
+<div>{{body}}</div>
+{{/project}}
+{{^project}}
+<h1>No projects</h1>
+{{/project}}
+EOF
+    expected = [:multi, 
+      [:mustache, :section, "project", nil, [:multi, 
+        [:static, "<h1>"], 
+        [:mustache, :etag, "name", nil], 
+        [:static, "</h1>\n<div>"], 
+        [:mustache, :etag, "body", nil], 
+        [:static, "</div>\n"]]], 
+        [:mustache, :inverted_section, "project", [:multi, 
+          [:static, "<h1>No projects</h1>\n"]]]]
+    tokens.should eq(expected)
+  end
+
   it 'parses helpers with context paths' do
     lexer = Handlebars::Parser.new
     tokens = lexer.compile(<<-EOF)

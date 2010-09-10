@@ -101,7 +101,10 @@ EOF
       end
 
       # We found {{ but we can't figure out what's going on inside.
-      error "Illegal content in tag" if content.empty?
+      # This applies to all tags except handlebar's shortened {{^}}
+      if type != '^'
+        error "Illegal content in tag" if content.empty?
+      end
 
       def find_context
         # A space after the helper indicates a context 'switch'
@@ -121,10 +124,27 @@ EOF
         @sections << [content, position, @result]
         @result = block
       when '^'
-        block = [:multi]
-        @result << [:mustache, :inverted_section, content, block]
-        @sections << [content, position, @result]
-        @result = block
+        if content.empty?
+          # We are dealing with handlebar's shortened {{^}}
+
+          # Close the section
+          section, pos, result = @sections.pop
+          @result = result
+          if section.nil?
+            error "Inverting unopened #{content.inspect}"
+          end
+
+          # Open a new inverted section with the same name
+          block = [:multi]
+          @result << [:mustache, :inverted_section, section, block]
+          @sections << [section, position, @result]
+          @result = block
+        else
+          block = [:multi]
+          @result << [:mustache, :inverted_section, content, block]
+          @sections << [content, position, @result]
+          @result = block
+        end
       when '/'
         section, pos, result = @sections.pop
         @result = result
