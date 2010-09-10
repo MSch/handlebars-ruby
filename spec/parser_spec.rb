@@ -38,14 +38,14 @@ a
 {{/ines/ingrid/items}}
 EOF
 
-    expected = [:multi, 
-      [:static, "<h1>"], 
+    expected = [:multi,
+      [:static, "<h1>"],
       [:mustache, :etag, "../../header", nil],
       [:static, "</h1>\n<div>"],
-      [:mustache, :etag, "./header", nil], 
-      [:static, "\n"], 
+      [:mustache, :etag, "./header", nil],
+      [:static, "\n"],
       [:mustache, :etag, "hans/hubert/header", nil],
-      [:static, "</div>\n"], 
+      [:static, "</div>\n"],
       [:mustache, :section, "ines/ingrid/items", nil, [:multi,
         [:static, "a\n"]]]]
     tokens.should eq(expected)
