@@ -1,7 +1,7 @@
 Handlebars
 ==========
 
-Handlebars is a implementation of [handlebars.js][2], a extension of
+Handlebars is a implementation of [handlebars.js][2], an extension of
 mustache by Yehuda Katz, in Ruby.
 
 
