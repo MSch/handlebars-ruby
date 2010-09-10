@@ -131,7 +131,7 @@ EOF
           section, pos, result = @sections.pop
           @result = result
           if section.nil?
-            error "Inverting unopened #{content.inspect}"
+            error "Inverting unopened section"
           end
 
           # Open a new inverted section with the same name

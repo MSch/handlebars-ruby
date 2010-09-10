@@ -3,6 +3,17 @@ require 'handlebars'
 
 describe Handlebars::Parser do
 
+  it 'fails when the handlebars inverted section syntax is used without an opened section' do
+    lexer = Handlebars::Parser.new
+    proc {
+      lexer.compile(<<-EOF)
+{{^}}
+<h1>No projects</h1>
+{{/project}}
+EOF
+    }.should raise_error(Handlebars::Parser::SyntaxError)
+  end
+
   it 'parses the handlebars inverted section syntax' do
     lexer = Handlebars::Parser.new
     tokens = lexer.compile(<<-EOF)
