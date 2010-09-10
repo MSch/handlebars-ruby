@@ -136,7 +136,14 @@ EOF
         type = "}" if type == "{"
         @result << [:mustache, :utag, content]
       else
-        @result << [:mustache, :etag, content]
+        # A space after the helper indicates a context 'switch'
+        context = if @scanner.peek(1) == ' '
+          @scanner.skip(/ /)
+          @scanner.scan(ALLOWED_CONTENT)
+        else
+          nil
+        end
+        @result << [:mustache, :etag, content, context]
       end
 
       # Skip whitespace and any balancing sigils after the content

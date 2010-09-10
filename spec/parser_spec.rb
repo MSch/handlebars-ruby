@@ -3,6 +3,22 @@ require 'handlebars'
 
 describe Handlebars::Parser do
 
+  it 'parses helpers with context paths' do
+    lexer = Handlebars::Parser.new
+    tokens = lexer.compile(<<-EOF)
+<h1>{{helper context}}</h1>
+<h1>{{helper ..}}</h1>
+EOF
+
+    expected = [:multi, 
+      [:static, "<h1>"], 
+      [:mustache, :etag, "helper", "context"], 
+      [:static, "</h1>\n<h1>"], 
+      [:mustache, :etag, "helper", ".."], 
+      [:static, "</h1>\n"]]
+    tokens.should eq(expected)
+  end
+
   it 'parses extended paths' do
     lexer = Handlebars::Parser.new
     tokens = lexer.compile(<<-EOF)
@@ -15,17 +31,18 @@ a
 EOF
 
     expected = [:multi, 
-        [:static, "<h1>"], 
-        [:mustache, :etag, "../../header"],
-        [:static, "</h1>\n<div>"],
-        [:mustache, :etag, "./header"], 
-        [:static, "\n"], 
-        [:mustache, :etag, "hans/hubert/header"],
-        [:static, "</div>\n"], 
-        [:mustache, :section, "ines/ingrid/items", [:multi, 
-          [:static, "a\n"]]]]
+      [:static, "<h1>"], 
+      [:mustache, :etag, "../../header", nil],
+      [:static, "</h1>\n<div>"],
+      [:mustache, :etag, "./header", nil], 
+      [:static, "\n"], 
+      [:mustache, :etag, "hans/hubert/header", nil],
+      [:static, "</div>\n"], 
+      [:mustache, :section, "ines/ingrid/items", [:multi, 
+        [:static, "a\n"]]]]
     tokens.should eq(expected)
   end
+
   it 'parses the mustache example' do
     lexer = Handlebars::Parser.new
     tokens = lexer.compile(<<-EOF)
@@ -46,7 +63,7 @@ EOF
 
     expected = [:multi,
       [:static, "<h1>"],
-      [:mustache, :etag, "header"],
+      [:mustache, :etag, "header", nil],
       [:static, "</h1>\n"],
       [:mustache,
         :section,
@@ -57,16 +74,16 @@ EOF
             "first",
             [:multi,
               [:static, "<li><strong>"],
-              [:mustache, :etag, "name"],
+              [:mustache, :etag, "name", nil],
               [:static, "</strong></li>\n"]]],
           [:mustache,
             :section,
             "link",
             [:multi,
               [:static, "<li><a href=\""],
-              [:mustache, :etag, "url"],
+              [:mustache, :etag, "url", nil],
               [:static, "\">"],
-              [:mustache, :etag, "name"],
+              [:mustache, :etag, "name", nil],
               [:static, "</a></li>\n"]]]]],
       [:mustache,
         :section,
