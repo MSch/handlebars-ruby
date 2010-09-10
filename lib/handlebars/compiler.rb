@@ -49,7 +49,47 @@ class Handlebars
       end
       @s.getch
 
+      add_text
+      @mustache = ' '
 
+      while(chr = @s.getch)
+        if @mustache && chr == '}' && @s.peek == '}'
+          parts = @mustache.chomp.split(/\s+/)
+          mustache = parts[0]
+          param = lookup_for(parts[1])
+
+          @mustace = false
+
+          # finish reading off the close of the handlebars
+          @s.getch
+
+        # {{{expression}} is techically valid, but if we started with {{{ we'll try to read 
+        # }}} off of the close of the handlebars
+          @s.getch if (!@escaped && @s.peek == '}')
+
+          if @comment
+            @comment = false
+            return
+          elsif @partial
+            add_partial(mustache, param)
+            return
+          elsif @inverted
+            add_inverted_section(mustache)
+            return
+          elsif @open_block
+            add_block(mustache, param, parts)
+            return
+          else
+            return this.add_expression(mustache, param)
+          end
+
+          @escaped = true
+        elsif @comment
+          ;
+        else
+          @mustace << chr
+        end
+      end
     end
 
   end

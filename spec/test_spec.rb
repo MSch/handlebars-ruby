@@ -3,6 +3,6 @@ require 'handlebars'
 
 describe 'something' do
   it 'instanziates Compiler' do
-    Handlebars::Compiler.new
+    Handlebars::Compiler.new('')
   end
 end
