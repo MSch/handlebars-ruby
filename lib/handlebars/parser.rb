@@ -103,6 +103,16 @@ EOF
       # We found {{ but we can't figure out what's going on inside.
       error "Illegal content in tag" if content.empty?
 
+      def find_context
+        # A space after the helper indicates a context 'switch'
+        if @scanner.peek(1) == ' '
+          @scanner.skip(/ /)
+          @scanner.scan(ALLOWED_CONTENT)
+        else
+          nil
+        end
+      end
+
       # Based on the sigil, do what needs to be done.
       case type
       when '#'
@@ -136,14 +146,7 @@ EOF
         type = "}" if type == "{"
         @result << [:mustache, :utag, content]
       else
-        # A space after the helper indicates a context 'switch'
-        context = if @scanner.peek(1) == ' '
-          @scanner.skip(/ /)
-          @scanner.scan(ALLOWED_CONTENT)
-        else
-          nil
-        end
-        @result << [:mustache, :etag, content, context]
+        @result << [:mustache, :etag, content, find_context]
       end
 
       # Skip whitespace and any balancing sigils after the content
