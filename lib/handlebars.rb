@@ -1,0 +1,3 @@
+module Handlebars
+  # Your code goes here...
+end
