@@ -8,14 +8,22 @@ describe Handlebars::Parser do
     tokens = lexer.compile(<<-EOF)
 <h1>{{helper context}}</h1>
 <h1>{{helper ..}}</h1>
+{{#items ..}}
+haha
+{{haha}}
+{{/items}}
 EOF
 
-    expected = [:multi, 
-      [:static, "<h1>"], 
-      [:mustache, :etag, "helper", "context"], 
-      [:static, "</h1>\n<h1>"], 
-      [:mustache, :etag, "helper", ".."], 
-      [:static, "</h1>\n"]]
+    expected = [:multi,
+      [:static, "<h1>"],
+      [:mustache, :etag, "helper", "context"],
+      [:static, "</h1>\n<h1>"],
+      [:mustache, :etag, "helper", ".."],
+      [:static, "</h1>\n"],
+      [:mustache, :section, "items", "..", [:multi,
+        [:static, "haha\n"],
+        [:mustache, :etag, "haha", nil],
+        [:static, "\n"]]]]
     tokens.should eq(expected)
   end
 
@@ -38,7 +46,7 @@ EOF
       [:static, "\n"], 
       [:mustache, :etag, "hans/hubert/header", nil],
       [:static, "</div>\n"], 
-      [:mustache, :section, "ines/ingrid/items", [:multi, 
+      [:mustache, :section, "ines/ingrid/items", nil, [:multi,
         [:static, "a\n"]]]]
     tokens.should eq(expected)
   end
@@ -68,10 +76,12 @@ EOF
       [:mustache,
         :section,
         "items",
+        nil,
         [:multi,
           [:mustache,
             :section,
             "first",
+            nil,
             [:multi,
               [:static, "<li><strong>"],
               [:mustache, :etag, "name", nil],
@@ -79,6 +89,7 @@ EOF
           [:mustache,
             :section,
             "link",
+            nil,
             [:multi,
               [:static, "<li><a href=\""],
               [:mustache, :etag, "url", nil],
@@ -88,6 +99,7 @@ EOF
       [:mustache,
         :section,
         "empty",
+        nil,
         [:multi, [:static, "<p>The list is empty.</p>\n"]]]]
 
     tokens.should eq(expected)

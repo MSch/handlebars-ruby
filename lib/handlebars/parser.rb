@@ -117,7 +117,7 @@ EOF
       case type
       when '#'
         block = [:multi]
-        @result << [:mustache, :section, content, block]
+        @result << [:mustache, :section, content, find_context(), block]
         @sections << [content, position, @result]
         @result = block
       when '^'
@@ -146,7 +146,7 @@ EOF
         type = "}" if type == "{"
         @result << [:mustache, :utag, content]
       else
-        @result << [:mustache, :etag, content, find_context]
+        @result << [:mustache, :etag, content, find_context()]
       end
 
       # Skip whitespace and any balancing sigils after the content
