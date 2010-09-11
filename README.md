@@ -23,7 +23,7 @@ Installation
 Acknowledgements
 ----------------
 
-Thanks to all the [implementers][3] of the original mustache gem.
+Thanks to all the [implementors][3] of the original mustache gem.
 Handlebars is based on their codebase and hard work.
 
 
